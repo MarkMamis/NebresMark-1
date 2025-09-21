@@ -90,7 +90,7 @@ $config['base_url'] 				= '';
 | variable to blank.
 |
 */
-$config['index_page']               = 'index.php';
+$config['index_page']               = '';
 
 /*
 |--------------------------------------------------------------------------
@@ -275,7 +275,7 @@ $config['encryption_key']           = '';
 |   $config['soft_delete_column'] = 'deleted_at;
 |
 */
-$config['soft_delete']              = FALSE;
+$config['soft_delete']              = TRUE;
 $config['soft_delete_column']       = 'deleted_at';
 
 /*

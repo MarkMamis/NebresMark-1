@@ -1,0 +1,100 @@
+/* Enhanced Pagination Styles */
+.pagination-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 28px;
+    padding: 20px;
+    background-color: var(--dark-secondary);
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.pagination-info {
+    color: var(--text-gray);
+    margin-bottom: 16px;
+    font-size: 0.95rem;
+}
+
+.pagination-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+/* Style for LavaLust pagination */
+.pagination {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    gap: 5px;
+}
+
+.pagination li {
+    display: inline-block;
+}
+
+.pagination li a, 
+.pagination li span {
+    color: var(--text-gray);
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 10px 16px;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    display: inline-block;
+    min-width: 44px;
+    text-align: center;
+    font-size: 0.95rem;
+}
+
+.pagination li.active a, 
+.pagination li.active span {
+    background-color: var(--primary-color);
+    color: var(--text-white);
+    border-color: var(--primary-color);
+    font-weight: 500;
+    position: relative;
+    box-shadow: 0 0 12px rgba(140, 82, 255, 0.4);
+}
+
+.pagination li a:hover:not(.active) {
+    background-color: rgba(140, 82, 255, 0.12);
+    color: var(--primary-color);
+    transform: translateY(-2px);
+}
+
+.pagination li.disabled a,
+.pagination li.disabled span {
+    opacity: 0.5;
+    pointer-events: none;
+    cursor: default;
+}
+
+/* First and Last Page buttons */
+.pagination li:first-child a,
+.pagination li:last-child a {
+    padding: 10px 12px;
+    font-weight: 500;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+    .pagination-container {
+        padding: 16px 12px;
+    }
+    
+    .pagination li a, 
+    .pagination li span {
+        padding: 8px 12px;
+        min-width: 36px;
+        font-size: 0.85rem;
+    }
+    
+    .pagination {
+        gap: 4px;
+    }
+}

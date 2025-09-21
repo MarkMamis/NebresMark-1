@@ -58,13 +58,13 @@ defined('PREVENT_DIRECT_ACCESS') OR exit('No direct script access allowed');
 */
 
 $database['main'] = array(
-    'driver'	=> '',
-    'hostname'	=> '',
-    'port'		=> '',
-    'username'	=> '',
-    'password'	=> '',
-    'database'	=> '',
-    'charset'	=> '',
+    'driver'	=> 'mysql',
+    'hostname'	=> 'mysql-8c2331d-nebresmarkedniel22-9c1d.c.aivencloud.com',
+    'port'		=> '11757',
+    'username'	=> 'avnadmin',
+    'password'	=> 'AVNS_DJk5yDDMUUbTjtskMrk',
+    'database'	=> 'mockdata',
+    'charset'	=> 'utf8mb4',
     'dbprefix'	=> '',
     // Optional for SQLite
     'path'      => ''
