@@ -868,7 +868,11 @@ select.form-input option:hover {
 
 .nav-links {
     display: flex;
+    align-items: center;
     gap: 0.5rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
 }
 
 .nav-link {
@@ -878,7 +882,10 @@ select.form-input option:hover {
     border-radius: 50px;
     transition: all 0.2s ease;
     font-weight: 500;
-    margin: 0 4px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
 }
 
 .nav-link:hover {
@@ -890,6 +897,28 @@ select.form-input option:hover {
     background-color: #ffffff;
     color: var(--primary-color);
     font-weight: 600;
+}
+
+.user-info {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0.75rem 1.5rem;
+    color: rgba(255, 255, 255, 0.9);
+    border-radius: 50px;
+    background-color: rgba(255, 255, 255, 0.1);
+    cursor: default;
+    white-space: nowrap;
+}
+
+.admin-badge {
+    background: rgba(255, 255, 255, 0.3);
+    color: white;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
 }
 
 /* Responsive styles */
@@ -911,6 +940,37 @@ select.form-input option:hover {
     h1 { font-size: 1.3rem; }
     th, td { padding: 8px 4px; font-size: 0.9rem; }
     .btn { font-size: 0.85rem; padding: 8px 12px; }
+    
+    .header-content {
+        flex-direction: column;
+        gap: 1rem;
+        padding: 1rem;
+    }
+    
+    .brand-title {
+        font-size: 1.2rem;
+    }
+    
+    .nav-links {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.3rem;
+    }
+    
+    .nav-link {
+        padding: 0.5rem 1rem;
+        font-size: 0.85rem;
+    }
+    
+    .user-info {
+        padding: 0.5rem 1rem;
+        font-size: 0.85rem;
+    }
+    
+    .admin-badge {
+        font-size: 9px;
+        padding: 2px 6px;
+    }
     
     .form-container { padding: 1rem; }
     .buttons-container { flex-direction: column; }

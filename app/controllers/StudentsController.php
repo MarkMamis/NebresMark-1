@@ -11,18 +11,42 @@ class StudentsController extends Controller {
     {
         parent::__construct();
         $this->call->database();
-        $this->call->model('StudentsModel');
-        $this->call->library('form_validation');
+        $this->call->library(['auth', 'session', 'form_validation']);
         $this->call->helper(['url', 'alert']);
+        
+        // Load model if user is authenticated
+        if ($this->auth->is_logged_in()) {
+            $this->call->model('StudentsModel');
+        }
+    }
+
+    private function check_auth() {
+        if (!$this->auth->is_logged_in()) {
+            redirect('login');
+        }
+        // Load model after auth check passes
+        if (!isset($this->StudentsModel)) {
+            $this->call->model('StudentsModel');
+        }
+    }
+
+    private function check_admin() {
+        $this->check_auth();
+        if (!$this->auth->has_role('admin')) {
+            set_flash_alert('danger', 'Access denied. Admin privileges required.');
+            redirect('students');
+        }
     }
 
     public function home()
     {
+        $this->check_auth();
         $this->call->view('home');
     }
 
     public function dashboard()
     {
+        $this->check_auth();
         // Get latest 5 students for the table
         $data['students'] = $this->StudentsModel->getLatestStudents(5);
         // Get total count of all active students
@@ -34,11 +58,13 @@ class StudentsController extends Controller {
 
     public function index()
     {
+        $this->check_auth();
         // Redirect to paginated students view
         redirect('students');
     }
 
     public function display($id){
+        $this->check_auth();
         $student = $this->StudentsModel->getStudentById($id);
         if ($student) {
             $data['user'] = array($student);
@@ -49,6 +75,7 @@ class StudentsController extends Controller {
     }
 
     public function add() {
+        $this->check_admin();
         // Check if the request is POST
         if ($this->io->method() === 'post') {
             $this->form_validation
@@ -80,6 +107,7 @@ class StudentsController extends Controller {
         }
     }
     public function edit($id) {
+        $this->check_admin();
         if ($this->io->method() === 'post') {
             $this->form_validation
                 ->name('first_name')
@@ -120,6 +148,7 @@ class StudentsController extends Controller {
     }
 
     public function delete($id) {
+        $this->check_admin();
         if ($this->StudentsModel->soft_delete($id)) {
             set_flash_alert('success', 'Student was deleted successfully!');
         } else {
@@ -129,6 +158,7 @@ class StudentsController extends Controller {
     }
     
     public function pagination_test() {
+        $this->check_auth();
         
         // Get the current page number
         $page = 1;
@@ -186,6 +216,7 @@ class StudentsController extends Controller {
     }
     
     public function deleted() {
+        $this->check_admin();
         // Get the current page number
         $page = 1;
         if(isset($_GET['page']) && !empty($_GET['page'])) {
@@ -242,11 +273,114 @@ class StudentsController extends Controller {
     }
     
     public function restore($id) {
+        $this->check_admin();
         if ($this->StudentsModel->restore($id)) {
             set_flash_alert('success', 'Student was restored successfully!');
         } else {
             set_flash_alert('danger', 'Failed to restore student.');
         }
         redirect('students/deleted');
+    }
+    
+    // Authentication Methods
+    
+    public function login() {
+        // If already logged in, redirect to students page
+        if ($this->auth->is_logged_in()) {
+            redirect('students');
+        }
+
+        if ($this->io->method() === 'post') {
+            $username = $this->io->post('username');
+            $password = $this->io->post('password');
+
+            // Validate inputs
+            $this->form_validation
+                ->name('username')
+                ->required()
+                ->min_length(3);
+            
+            $this->form_validation
+                ->name('password')
+                ->required()
+                ->min_length(4);
+
+            if ($this->form_validation->run()) {
+                if ($this->auth->login($username, $password)) {
+                    set_flash_alert('success', 'Welcome back, ' . $username . '!');
+                    redirect('students');
+                } else {
+                    $data['error'] = 'Invalid username or password';
+                    $data['username'] = $username;
+                    $this->call->view('login', $data);
+                }
+            } else {
+                $errors = $this->form_validation->get_errors();
+                $data['error'] = implode('<br>', $errors);
+                $data['username'] = $username;
+                $this->call->view('login', $data);
+            }
+        } else {
+            $this->call->view('login');
+        }
+    }
+
+    public function register() {
+        // If already logged in, redirect to students page
+        if ($this->auth->is_logged_in()) {
+            redirect('students');
+        }
+
+        if ($this->io->method() === 'post') {
+            $username = $this->io->post('username');
+            $password = $this->io->post('password');
+            $confirm_password = $this->io->post('confirm_password');
+            $role = $this->io->post('role') ?? 'user';
+
+            // Validate inputs
+            $this->form_validation
+                ->name('username')
+                ->required()
+                ->min_length(3)
+                ->max_length(50);
+            
+            $this->form_validation
+                ->name('password')
+                ->required()
+                ->min_length(6);
+            
+            $this->form_validation
+                ->name('confirm_password')
+                ->required()
+                ->matches('password');
+
+            if ($this->form_validation->run()) {
+                $result = $this->auth->register($username, $password, $role);
+                
+                if ($result === true) {
+                    set_flash_alert('success', 'Registration successful! Please login.');
+                    redirect('login');
+                } else {
+                    $data['error'] = $result;
+                    $data['username'] = $username;
+                    $data['role'] = $role;
+                    $this->call->view('register', $data);
+                }
+            } else {
+                $errors = $this->form_validation->get_errors();
+                $data['error'] = implode('<br>', $errors);
+                $data['username'] = $username;
+                $data['role'] = $role;
+                $this->call->view('register', $data);
+            }
+        } else {
+            $this->call->view('register');
+        }
+    }
+
+    public function logout() {
+        $this->auth->logout();
+        set_flash_alert('success', 'You have been logged out successfully.');
+        redirect('login');
     }
 }
